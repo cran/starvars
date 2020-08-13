@@ -2,7 +2,7 @@ Package: starvars
 Type: Package
 Title: Vector Logistic Smooth Transition Models / Realized Covariances
         Construction
-Version: 0.1.7
+Version: 0.1.8
 Authors@R: c(
   person("Andrea", "Bucci", email = "andrea.bucci@unich.it", role = c("aut", "cre", "cph")),
   person("Giulio", "Palomba", role = "aut"),
@@ -19,11 +19,11 @@ Imports: MASS, ks, zoo, data.table, methods, matrixcalc, vars, nloptr,
         lubridate, xts, lessR, quantmod
 URL: https://github.com/andbucci/starvars
 NeedsCompilation: no
-Packaged: 2020-04-29 17:36:33 UTC; andre
+Packaged: 2020-08-11 09:29:00 UTC; andre
 Author: Andrea Bucci [aut, cre, cph],
   Giulio Palomba [aut],
   Eduardo Rossi [aut],
   Andrea Faragalli [ctb]
 Maintainer: Andrea Bucci <andrea.bucci@unich.it>
 Repository: CRAN
-Date/Publication: 2020-05-04 14:40:02 UTC
+Date/Publication: 2020-08-13 10:00:02 UTC
