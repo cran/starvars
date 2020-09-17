@@ -31,8 +31,6 @@ importFrom("fGarch", "garchFit")
 importFrom("graphics", "abline", "axis", "box", "layout", "lcm", "lines", "mtext", "par", "plot",
            "points")
 
-importFrom("highfrequency", "rCov")
-
 importFrom("ks", "invvec", "invvech")
 
 importFrom("lessR", "to")
@@ -58,7 +56,7 @@ importFrom("utils", "tail.matrix")
 
 importFrom("vars", "VAR")
 
-importFrom("xts", "apply.monthly", "apply.quarterly", "apply.yearly", "as.xts")
+importFrom("xts", "xts", "apply.daily", "apply.monthly", "apply.quarterly", "apply.yearly", "as.xts")
 
 importFrom("zoo", "as.Date", "as.yearqtr", "index", "zoo")
 
