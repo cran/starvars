@@ -6,7 +6,7 @@ summary.VLSTAR<-function(object,...){
   p<-x$p
   x$T <- nrow(x$yoriginal)
   Z<-t(as.matrix(tail.matrix(x$Data[[1]])))
-  x$npar <- k*ncol(x$Data[[1]])*x$m + 2*(x$m-1)*ncol(x$Data[[1]])
+  x$npar <- 2*ncol(x$Data[[1]])*x$m + x$m*ncol(x$Data[[2]])*ncol(x$Data[[1]])
 
   ## export results
   x$coefficients<-as.list(as.data.frame(x$Bhat))
@@ -60,9 +60,16 @@ print.summary.VLSTAR<-function(x,...){
     stars1<-x$stars[[i]]
     coeftop <- cbind(a, b, c, stars1)
     colnames(coeftop) <- c('Estimate', 'Std. Error', 'p-value', '')
-    coeftoprint[[i]] <- rbind(coeftop, rep('', 4), c(round(x$Gammac[i,1],4),'','',''), c(round(x$Gammac[i,2],4),'','',''),
-                              rep('', 4), c(aic1[i],'','',''), c(bic1[i], '','',''))
-    rownames(coeftoprint[[i]])<- c(rownames(x$Bhat),"---",'gamma', 'c',"---", 'AIC', 'BIC')
+    if(x$singlecgamma == TRUE){
+      coeftoprint[[i]] <- rbind(coeftop, rep('', 4), c(aic1[i],'','',''), c(bic1[i], '','',''))
+      rownames(coeftoprint[[i]])<- c(rownames(x$Bhat),"---",'AIC', 'BIC')
+    } else{
+      coeftoprint[[i]] <- rbind(coeftop, rep('', 4), c(round(x$Gammac[seq(i, nrow(x$Gammac), ncol(x$Data[[1]])),1],4),rep('',(4-x$m+1))),
+                                c(round(x$Gammac[seq(i, nrow(x$Gammac), ncol(x$Data[[1]])),2],4),rep('',(4-x$m+1))),
+                                rep('', 4), c(aic1[i],'','',''), c(bic1[i], '','',''))
+      rownames(coeftoprint[[i]])<- c(rownames(x$Bhat),"---",'gamma', 'c',"---", 'AIC', 'BIC')
+    }
+
   }
   names(coeftoprint) <- colnames(x$Bhat)
   cat("Model VLSTAR with ", x$m, " regimes\n", sep ='')
@@ -70,7 +77,10 @@ print.summary.VLSTAR<-function(x,...){
   cat("\nNumber of variables used as covariates:", x$k,"\tNumber of estimated parameters:", x$npar)
   #cat("\nAIC",x$aic)
   #cat("\nBIC", x$bic)
-  cat("\nMultivariate log-likelihood:", x$MultiLL,"\n\n")
+  cat("\nMultivariate log-likelihood:", x$MultiLL,"\n")
+  if(x$singlecgamma == TRUE){
+    cat("\nUnique gamma:", round(x$Gammac[seq(1, nrow(x$Gammac), ncol(x$Data[[1]])),1],4),"\tUnique c:", round(x$Gammac[seq(1, nrow(x$Gammac), ncol(x$Data[[1]])),2],4), "\n")
+  }
   cat('\nCoefficients:')
   print(noquote(coeftoprint))
   cat("=================================\n")
