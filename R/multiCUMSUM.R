@@ -1,5 +1,31 @@
+#' Multivariate CUMSUM test
+#'
+#' Function returns the test statistics for the presence of co-breaks in a set of multivariate time series.
+#' @param data a \code{(T x N)} \code{matrix} or \code{data.frame} containing the \code{N} time series over period \code{T}
+#' @param conf.level Confidence level. By default set to 0.95
+#' @param max.breaks Integer, determines the highest number of common breaks from 1 to 7.
+#' @return
+#' \item{Lambda Test statistics}{a matrix of test statistics on the presence of a number of co-break equal to \code{max.breaks} in the conditional mean}
+#' \item{Omega Test statistics}{a matrix of test statistics on the presence of a number of co-break equal to \code{max.breaks} in the conditional variance}
+#' \item{Break location}{the index and the Date where the common breaks are located}
+#' @references Aue A., Hormann S., Horvath  L.and Reimherr M. (2009), Break detection in the covariance structure of multivariate time series models. \emph{The Annals of Statistics}. 37: 4046-4087
+#' Bai J., Lumsdaine R. L. and Stock J. H. (1998), Testing For and Dating Common Breaks in Multivariate Time Series. \emph{Review of Economic Studies}. 65: 395-432
+#' Barassi M., Horvath L. and Yuqian Z. (2018), Change-Point Detection in the Conditional Correlation Structure of Multivariate Volatility Models. \emph{Journal of Business \& Economic Statistics}
+#' @author Andrea Bucci and Giulio Palomba
+#' @importFrom xts as.xts xts
+#' @importFrom zoo as.Date index
+#' @keywords VLSTAR
+#' @export multiCUMSUM
+#' @aliases print.multiCUMSUM
+#' @examples
+#' data(Realized)
+#' testCS <- multiCUMSUM(Realized[,1:10], conf.level = 0.95)
+#' print(testCS)
 multiCUMSUM <- function(data, conf.level = 0.95, max.breaks = 7){
 
+  if(conf.level > 1 | conf.level < 0){
+    stop('Please provide a valid value for alpha')
+  }
 nrowy <- nrow(data)
 ncoly <- ncol(data)
 
@@ -53,7 +79,7 @@ for (i in 1:nrowy){
   tmp <- vech(t(data[i,])%*%data[i,])
     tmp1 <- tmp1 + tmp
     Sk[i,] <- t(1/sqrt(nrow(data)) * (tmp1 - (i/nrowy)*sumvechy))
-    Lambda_hat[i] <- t(Sk[i,])%*%ginv(D)%*%Sk[i,]
+    Lambda_hat[i] <- t(Sk[i,])%*%MASS::ginv(D)%*%Sk[i,]
 
 }
 Lambda[[1]] <- max(Lambda_hat)
@@ -86,7 +112,7 @@ for(k in 2:3){
       tmp <- vech(t(data_1[[k]][i,])%*%data_1[[k]][i,])
       tmp1 <- tmp1 + tmp
       Sk[i,] <- t(1/sqrt(nrow(data_1[[k]])) * (tmp1 - (i/nrowy)*sumvechy))
-      Lambda_hat[i] <- t(Sk[i,])%*%ginv(D)%*%Sk[i,]
+      Lambda_hat[i] <- t(Sk[i,])%*%MASS::ginv(D)%*%Sk[i,]
 
     }
     Lambda[[k]] <- max(Lambda_hat)
@@ -124,7 +150,7 @@ for(k in 4:7){
       tmp <- vech(t(data_1[[k]][i,])%*%data_1[[k]][i,])
       tmp1 <- tmp1 + tmp
       Sk[i,] <- t(1/sqrt(nrow(data_1[[k]])) * (tmp1 - (i/nrowy)*sumvechy))
-      Lambda_hat[i] <- t(Sk[i,])%*%ginv(D)%*%Sk[i,]
+      Lambda_hat[i] <- t(Sk[i,])%*%MASS::ginv(D)%*%Sk[i,]
 
     }
     Lambda[[k]] <- max(Lambda_hat)
@@ -203,7 +229,7 @@ class(multiCS) <- 'multiCUMSUM'
 return(multiCS)
 }
 
-
+#' @export
 print.multiCUMSUM <- function(x, ...) {
   nrowlam <- nrow(x$M)
   breakpoint <- matrix(ncol = nrowlam, nrow = nrowlam)

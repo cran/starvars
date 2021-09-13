@@ -1,4 +1,32 @@
-#'@S3method plot VLSTAR forecasts
+#' Plot methods for a vlstarpred object
+#'
+#' Plot method for objects with class attribute \code{vlstarpred}.
+#'
+#' @param col.ci Character vector, colors for the interval forecast.
+#' @param col.obs Character vector, colors for the observed values.
+#' @param col.pred Character vector, colors for the predicted values.
+#' @param col.vline Character vector, colors for the vertical line.
+#' @param lty.ci Vector, lty for the interval forecast.
+#' @param lty.obs Vector, lty for the plot of the observed values.
+#' @param lty.pred Vector, lty for the plot of the predicted values.
+#' @param lty.vline Vector, lty for the vertical line.
+#' @param lwd.ci Vector, lwd for the interval forecast.
+#' @param lwd.obs Vector, lwd for the plot of the observed values.
+#' @param lwd.pred Vector, lwd for the plot of the predicted values.
+#' @param lwd.vline Vector, lwd for the vertical line.
+#' @param main Character vector, the titles of the plot.
+#' @param mar Setting of margins.
+#' @param names Character vector, the variables names to be plotted. If left \code{NULL}, all variables are plotted.
+#' @param oma Setting of outer margins.
+#' @param type Character, if \code{multiple} all plots are drawn in a single device, otherwise the plots are shown consecutively.
+#' @param x An object of class \sQuote{\code{vlstarpred}}.
+#' @param xlab Character vector signifying the labels for the x-axis.
+#' @param ylab Character vector signifying the labels for the y-axis.
+#' @param ylim Vector, the limits of the y-axis.
+#' @param \dots Passed to internal plot function.
+#' @export
+#' @author Andrea Bucci
+#' @seealso \code{\link{predict.VLSTAR}}
 
 plot.vlstarpred <- function(x, type = c('single', 'multiple'), names = NULL,
                             main = NULL, xlab = NULL, ylab = NULL,
@@ -6,6 +34,7 @@ plot.vlstarpred <- function(x, type = c('single', 'multiple'), names = NULL,
                             lwd.ci = 1, lwd.vline = 1, col.obs = NULL, col.pred = NULL, col.ci = NULL,
                             col.vline = NULL, ylim = NULL, mar = par("mar"), oma = par("oma"),...){
   op <- par(no.readonly = TRUE)
+  on.exit(par(op))
   type <- match.arg(type)
   ifelse(is.null(names), ynames <- colnames(x$y), ynames <- names)
   nrowy <- nrow(x$y)
@@ -62,6 +91,5 @@ plot.vlstarpred <- function(x, type = c('single', 'multiple'), names = NULL,
       plotprediction(x = x, name = ynames[i], main = main[i], col = col, lty = lty, lwd = lwd, ylab = ylab[i], xlab = xlab[i], ...)
     }
   }
-  on.exit(par(op))
 }
 

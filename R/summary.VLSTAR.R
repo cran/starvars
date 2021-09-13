@@ -1,4 +1,16 @@
-#' @S3method summary VLSTAR
+#' Summary method for objects of class VLSTAR
+#'
+#' \sQuote{\code{summary}} methods for class \sQuote{\code{VLSTAR}}.
+#' @aliases summary print.summary.VLSTAR print.summary
+#' @param object An object of class \sQuote{\code{VLSTAR}} obtained through \command{VLSTAR()}.
+#' @param x A summary object of class \sQuote{\code{VLSTAR}} obtained through \command{summary()}.
+#' @param \dots further arguments to be passed to and from other methods
+#' @references Terasvirta T. and Yang Y. (2014), Specification, Estimation and Evaluation of Vector Smooth Transition Autoregressive Models with Applications. \emph{CREATES Research Paper 2014-8}
+#' @author Andrea Bucci
+#' @keywords VLSTAR
+#' @seealso \code{\link{VLSTAR}}
+#' @export
+#'
 summary.VLSTAR<-function(object,...){
   x<-object
   k<-ncol(x$Data[[2]])
@@ -35,7 +47,8 @@ summary.VLSTAR<-function(object,...){
   NextMethod('print.summary')
 }
 
-#' @S3method print summary.VLSTAR
+#' @export
+#' @describeIn summary.VLSTAR Print of the summary
 print.summary.VLSTAR<-function(x,...){
   digits = 3
   coeftoprint<-list()
@@ -46,9 +59,9 @@ print.summary.VLSTAR<-function(x,...){
     r[littlex]<-format(x[littlex],digits=min(digits,2), scientific=TRUE)
     if(toLatex)
       r<-gsub("(e.*)","slashtext{\\1}",r)
-    if(class(x)=="numeric")
+    if (is(x, "numeric"))
       return(noquote(r))
-    if(class(x)=="matrix")
+    if (is(x, "matrix"))
       return(matrix(noquote(r), ncol=ncol(x), nrow=nrow(x)))
   }
   for(i in 1:length(x$bigcoefficients)){
@@ -84,5 +97,5 @@ print.summary.VLSTAR<-function(x,...){
   cat('\nCoefficients:')
   print(noquote(coeftoprint))
   cat("=================================\n")
-  cat("\n Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1")
+  cat("\n Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 \n")
 }

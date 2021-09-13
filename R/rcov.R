@@ -1,3 +1,34 @@
+#' Realized Covariance
+#'
+#' Function returns the vectorization of the lowest triangular of the Realized Covariance matrices for different frequencies.
+#' @param data a \code{(T x N)} \code{xts} object containing the \code{N} price/return series over period \code{T}
+#' @param freq a string defining the desired frequency for the Realized Covariance matrices between "daily", "monthly", "quarterly" or "yearly"
+#' @param make.ret boolean, in case it is \code{TRUE} the data are converted in returns, \code{FALSE} otherwise
+#' @param cholesky boolean, in case it is \code{TRUE} the Cholesky factors of the Realized Covariance matrices are calculated, \code{FALSE} by default
+#' @return
+#' \item{Realized Covariances}{a \eqn{M \times N(N+1)/2} matrix of realized covariances, where \emph{M} is the number of lower frequency data}
+#' \item{Cholesky Factors (optional)}{a \eqn{M \times N(N+1)/2} matrix of Cholesky factors of the realized
+#' covariance matrices, where \emph{M} is the number of lower frequency data}
+#' \item{returns (optional)}{a \eqn{T \times N} matrix of returns, when \code{make.ret = TRUE}}
+#' @references Andersen T.G., Bollerslev T., Diebold F.X. and Labys P. (2003), Modeling and Forecasting Realized Volatility. \emph{Econometrica}. 71: 579-625
+#'
+#' Barndorff-Nielsen O.E. and Shephard  N. (2002), Econometric analysis of realised volatility and its use in estimating stochastic volatility models \emph{Journal of the Royal Statistical Society}. 64(2): 253-280
+#' @author Andrea Bucci
+#' @importFrom methods is
+#' @importFrom zoo as.yearqtr
+#' @importFrom xts xts apply.daily apply.monthly apply.quarterly apply.yearly
+#' @importFrom matrixcalc vech
+#' @importFrom quantmod dailyReturn monthlyReturn yearlyReturn
+#' @importFrom ks invvech
+#' @importFrom zoo zoo
+#' @importFrom lessR to
+#' @export
+#' @keywords RCOV
+#' @examples
+#' data(Sample5minutes)
+#' rc <- rcov(Sample5minutes, freq = 'daily', cholesky = TRUE, make.ret = TRUE)
+#' print(rc)
+#'
 rcov <- function(data, freq = c('daily', 'monthly', 'quarterly', 'yearly'), make.ret = TRUE, cholesky = FALSE){
 freq <- match.arg(freq)
   if(is(data, 'xts') == FALSE){
@@ -23,8 +54,8 @@ elapsed_quarters <- function(end_date, start_date){
      as.yearqtr(start_date))*4+1
 }
 elapsed_years <- function(end_date, start_date){
-  year(end_date)-
-    year(start_date)+1
+  as.numeric(format(end_date, format = '%Y'))-
+    as.numeric(format(start_date, format = '%Y'))+1
 }
 
 makeReturns <- function (ts){
@@ -108,7 +139,7 @@ if(make.ret == TRUE){
         realized[, k] <- apply.quarterly(cross1[,k], sum)
       }
       chol2 <- matrix(ncol = (ncoly*(ncoly+1)/2), nrow = nquarter)
-      for (j in 1:nmonth){
+      for (j in 1:nquarter){
         rcovmat <- invvech(as.matrix(realized[j,]))
         chol1 <- t(chol(rcovmat, pivot = T))
         chol2[j,] <- vech(chol1)
@@ -118,7 +149,7 @@ if(make.ret == TRUE){
     }
     if(freq == 'yearly'){
       for(j in 1:ncoly){
-        retu[,j] <- monthlyReturn(data[,j])*100
+        retu[,j] <- dailyReturn(data[,j])*100
       }
       crosspro <- matrix(ncol = (ncoly*(ncoly+1)/2), nrow = nrowy)
       for (i in 1:nrowy){
@@ -197,7 +228,7 @@ if(make.ret == TRUE){
         realized[, k] <- apply.quarterly(cross1[,k], sum)
       }
       chol2 <- matrix(ncol = (ncoly*(ncoly+1)/2), nrow = nquarter)
-      for (j in 1:nmonth){
+      for (j in 1:nquarter){
         rcovmat <- invvech(as.matrix(realized[j,]))
         chol1 <- t(chol(rcovmat, pivot = T))
         chol2[j,] <- vech(chol1)
@@ -232,12 +263,22 @@ names1 <- to('y', (ncoly*(ncoly+1)/2), same.size = FALSE)
 colnames(realized) <- names1
 colnames(chol2) <- names1
 
-if(cholesky == TRUE){
+if(make.ret == T){
+  if(cholesky == TRUE){
+    results <- list(realized, chol2, retu)
+    names(results) <- c('Realized Covariances', 'Cholesky Factors', 'returns')
+  }else{
+    results <- list(realized, retu)
+    names(results) <- c('Realized Covariances', 'returns')
+  }
+}else{
+  if(cholesky == TRUE){
   results <- list(realized, chol2)
   names(results) <- c('Realized Covariances', 'Cholesky Factors')
-}else{
+  }else{
   results <- list(realized)
   names(results) <- 'Realized Covariances'
+  }
 }
 return(results)
 }
