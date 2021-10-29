@@ -7,6 +7,7 @@
 #' @param \dots further arguments to be passed to and from other methods
 #' @references Terasvirta T. and Yang Y. (2014), Specification, Estimation and Evaluation of Vector Smooth Transition Autoregressive Models with Applications. \emph{CREATES Research Paper 2014-8}
 #' @author Andrea Bucci
+#' @return An object of class \code{summary.VLSTAR} containing a list of summary information from VLSTAR estimates. When \code{print} is applied to this object, summary information are printed
 #' @keywords VLSTAR
 #' @seealso \code{\link{VLSTAR}}
 #' @export
