@@ -8,7 +8,6 @@
 #'  Autoregressive Models with Applications. \emph{CREATES Research Paper 2014-8}
 #' @author Andrea Bucci
 #' @return Estimated coefficients of the VLSTAR model
-#' @export
 #' @keywords VLSTAR
 #' @examples
 #' mean(1:3)
