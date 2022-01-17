@@ -433,7 +433,7 @@ if(method == 'ML'){
     }
     names1 <- list()
     for(j in 1:m){
-      names1[[j]] <- as.data.frame(paste(colnames(x), 'm_', j))
+      names1[[j]] <- as.data.frame(paste(colnames(x), ' m_', j, sep = ''))
     }
     names1 <- as.matrix(do.call(rbind,names1))
     rownames(BBhat) <- names1
